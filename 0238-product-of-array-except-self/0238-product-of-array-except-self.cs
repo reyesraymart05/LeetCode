@@ -1,21 +1,25 @@
 public class Solution {
     public int[] ProductExceptSelf(int[] nums) {
-        int n = nums.Length;
-        int[] result = new int[n];
-
-        result[0] = 1;
-        for (int i = 1; i < n; i++){
-            result[i] = result[i-1] * nums[i-1];
-
+        int[] answers = Enumerable.Repeat(1, nums.Length).ToArray();
+        
+        for (int i = 0; i < nums.Length; i++) {
+            if (i == 0) {
+                answers[i] = 1;
+            }
+            if (i - 1> -1) {
+                var pre = answers[i -1] * nums[i - 1];
+                answers[i] *= pre;
+            }
         }
+        var suf = 1;
+        for (int i = nums.Length -1 ; i >= 0; i --) {
 
-        int rightProduct = 1;
-        for (int i = n - 1; i >= 0; i--) {
-            result[i] = result[i] * rightProduct;
-            rightProduct *= nums[i];
+                answers[i] *= suf;
+                suf *= nums[i];
+            
         }
-
-        return result;
+        
+        return answers;
 
     }
 }
