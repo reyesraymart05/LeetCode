@@ -15,8 +15,13 @@ Collection of LeetCode questions to ace the coding
 |  |
 | ------- |
 | [0238-product-of-array-except-self](https://github.com/reyesraymart05/LeetCode/tree/master/0238-product-of-array-except-self) |
+| [0334-increasing-triplet-subsequence](https://github.com/reyesraymart05/LeetCode/tree/master/0334-increasing-triplet-subsequence) |
 ## Prefix Sum
 |  |
 | ------- |
 | [0238-product-of-array-except-self](https://github.com/reyesraymart05/LeetCode/tree/master/0238-product-of-array-except-self) |
+## Greedy
+|  |
+| ------- |
+| [0334-increasing-triplet-subsequence](https://github.com/reyesraymart05/LeetCode/tree/master/0334-increasing-triplet-subsequence) |
 <!---LeetCode Topics End-->
