@@ -1,0 +1,27 @@
+public class Solution {
+    public int Trap(int[] height) {
+        int total = 0, l = 0, r = height.Length - 1; 
+        int lmax = 0, rmax = height[r];
+        
+        while (l < r) {
+           if (height[l] <= height[r]) {
+                // If left height is less than or equal to right height
+                if (height[l] < lmax) {
+                    total += lmax - height[l]; // Water trapped on the left
+                } else {
+                    lmax = height[l]; // Update left max height
+                }
+                l++; // Move left pointer
+            } else {
+                // If right height is less than left height
+                if (height[r] < rmax) {
+                    total += rmax - height[r]; // Water trapped on the right
+                } else {
+                    rmax = height[r]; // Update right max height
+                }
+                r--; // Move right pointer
+            }
+        }
+        return total; // Return total water trapped
+    }
+}
