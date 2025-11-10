@@ -1,44 +1,68 @@
-public class MinStack {
-    Stack<(int val, int minVal)> stack; 
-    int minVal = int.MaxValue;
-    public MinStack() {
-        stack = new Stack<(int, int)>();
+public class MinStack
+{
+    private const int GrowthFactor = 2;
+
+    private long[] _data = [];
+    private int _index = 0;
+    private int _size = 0;
+
+    public MinStack()
+    {
     }
-    
-    public void Push(int val) {
-        if(minVal > val)
+
+    public void Push(int val)
+    {
+        Grow();
+
+        var min = val;
+
+        if (_index > 0)
         {
-            minVal = val;
+            var top = _data[_index - 1];
+            var topMin = (int)(top & uint.MaxValue);
+
+            if (topMin < min)
+            {
+                min = topMin;
+            }
         }
-        stack.Push((val, minVal));
+
+        long b = val;
+        b <<= 32;
+        b |= (uint)min;
+        _data[_index++] = b;
     }
-    
-    public void Pop() {
-        stack.Pop();
-        if(stack.Count > 0)
+
+    public void Pop()
+    {
+        _index--;
+    }
+
+    public int Top()
+    {
+        return (int)(_data[_index - 1] >> 32);
+    }
+
+    public int GetMin()
+    {
+        return (int)(_data[_index - 1] & uint.MaxValue);
+    }
+
+    private void Grow()
+    {
+        if (_size > _index + 1)
         {
-            minVal = stack.Peek().minVal;
+            return;
         }
-        else
+
+        if (_size == 0)
         {
-            minVal = int.MaxValue;
+            _size = GrowthFactor;
         }
-    }
-    
-    public int Top() {
-        return stack.Peek().val;
-    }
-    
-    public int GetMin() {
-        return stack.Peek().minVal;
+
+        var newData = new long[_size * GrowthFactor];
+        Array.Copy(_data, newData, _data.Length);
+        _data = newData;
+        _size = _data.Length;
     }
 }
-
-/**
- * Your MinStack object will be instantiated and called as such:
- * MinStack obj = new MinStack();
- * obj.Push(val);
- * obj.Pop();
- * int param_3 = obj.Top();
- * int param_4 = obj.GetMin();
- */
