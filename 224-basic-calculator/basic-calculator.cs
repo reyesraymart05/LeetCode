@@ -1,58 +1,54 @@
 public class Solution {
+    public int Calculate(string s) {
+        int result = 0, num = 0, sign = 1;
+        Stack<int> st = new();
 
-        public int Calculate(string s)
+        for(int i = 0; i<s.Length;i++)
         {
-            int result = 0;
-            int i = 0;
-            Stack<int> stack = new Stack<int>();
-            int sign = 1;
-            int num = 0;
-            while (i < s.Length)
+            if(s[i] == ' ')
             {
-                switch (s[i])
-                {
-                    case '+':
-                        sign = 1;
-                        break;
-                    case '-':
-                        sign = -1;
-                        break;
-                    case '(':
-                        stack.Push(result);
-                        stack.Push(sign);
-                        result = 0;
-                        sign = 1;
-                        break;
-                    case ')':
-                        int lastSign = stack.Pop();
-                        result *= lastSign;
-                        int lastNum = stack.Pop();
-                        result += lastNum;
-
-                        break;
-                    case ' ':
-                        break;
-                    default:
-                        if (char.IsDigit(s[i]))
-                        {
-                            StringBuilder stringBuilder = new StringBuilder();
-                            stringBuilder.Append(s[i]);
-                            while (i+1 < s.Length && char.IsDigit(s[i+1]))
-                            {
-                                stringBuilder.Append(s[++i]);
-                            }
-
-                            num = int.Parse(stringBuilder.ToString());
-                            num *= sign;
-                            result+=num;
-                            sign = 1;
-                        }
-                        break;
-                }
-                i++;
+                continue;
             }
-
-            return result;
+            if(s[i]-'0' >= 0 && s[i]-'0'<=9)
+            {
+                num = num * 10 + (s[i]-'0');
+            }
+            else if (s[i] == '+')
+            {
+                result += num*sign;
+                sign = 1;
+                num = 0;
+            }
+            else if (s[i] == '-')
+            {
+                result += num * sign;
+                sign = -1;
+                num = 0;
+            }
+            else if (s[i] == '(')
+            {
+                num = 0;
+                st.Push(result);
+                st.Push(sign);
+                sign = 1;
+                result = 0;
+            }
+            else
+            {
+                result += sign * num;
+                num = 0;
+                if(st.Count>0)
+                {
+                    result = result * st.Pop();
+                    result += st.Pop();
+                }
+                sign = 1;
+            }
         }
-      
+        if(num > 0 )
+        {
+            result += num*sign;
+        }
+        return result;
+    }
 }
