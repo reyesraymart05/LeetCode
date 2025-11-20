@@ -23,37 +23,33 @@ public class Node {
 
 public class Solution {
     public Node Connect(Node root) {
-         Node cur = root;
- while (cur != null)
- {
-     Node nextHead = null;
-     Node nextPrevious = null;
-     while (cur != null)
-     {
-         if (cur.left != null)
-         {
-             if (nextPrevious != null)
-                 nextPrevious.next = cur.left;
-             else
-                 nextHead = cur.left;
-             nextPrevious = cur.left;
-         }
-
-         if (cur.right != null)
-         {
-             if (nextPrevious != null)
-                 nextPrevious.next = cur.right;
-             else
-                 nextHead = cur.right;
-             nextPrevious = cur.right;
-         }
-
-         cur = cur.next;
-     }
-
-     cur = nextHead;
- }
-
- return root;
+        List<Node> curLevel = new List<Node>();
+        if(root == null){
+            return root;
+        }
+        curLevel.Add(root);
+        ConnectLevel(curLevel);
+        return root;
+    }
+    public void ConnectLevel(List<Node> nodes) {
+        List<Node> nextLevel = new List<Node>();
+        for(int i =0; i < nodes.Count(); i++){
+            if(i + 1 < nodes.Count()){
+                nodes[i].next  = nodes[i+1];
+            }
+            else{
+                nodes[i].next = null;
+            }
+            if(nodes[i].left != null){
+                nextLevel.Add(nodes[i].left);
+            }
+            if(nodes[i].right != null){
+                nextLevel.Add(nodes[i].right);
+            }
+        }
+        if(nextLevel.Count() == 0){
+            return;
+        }
+        ConnectLevel(nextLevel);
     }
 }
