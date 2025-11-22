@@ -23,30 +23,28 @@ public class Node {
 
 public class Solution {
     public Node Connect(Node root) {
-        if(root == null) return root;
-        Queue<Node> q = new Queue<Node>();
-        q.Enqueue(root);
-        while(q.Count > 0){
-            int count = q.Count;
-            Node prev = null;
-            for(int i = 0; i < count;i++){
-                Node cur = q.Dequeue();
-                if(cur.right != null)  q.Enqueue(cur.right);
-                if(cur.left != null)  q.Enqueue(cur.left);
-                cur.next = prev;
-                prev = cur;
-            }
-        }
+        if (root == null) return null;
+
+        Connect(root.right, root);
+        Connect(root.left, root);
+
         return root;
     }
+
+    private void Connect(Node root, Node parent) {
+        if (root == null) return;
+
+        if (parent.left == root && parent.right != null) {
+            root.next = parent.right;
+        } else {
+            var tmp = parent.next;
+            while (root.next == null && tmp != null) {
+                root.next = tmp.left ?? tmp.right;
+                tmp = tmp.next;
+            }
+        }
+
+        Connect(root.right, root);
+        Connect(root.left, root);
+    }
 }
-
-
-
-
-
-
-
-
-
-
