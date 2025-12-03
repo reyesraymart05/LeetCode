@@ -1,49 +1,37 @@
 public class Solution {
     public bool CanFinish(int numCourses, int[][] prerequisites) {
-        //[2] --> [1,3] i.e currCourse -> all preReq
-        var map = new Dictionary<int, List<int>>();
-
-        var visited = new HashSet<int>();
-
-        for(int i=0; i<numCourses; i++){
-            map.Add(i, new List<int>());
+        var g = new List<int>[numCourses];
+        foreach(var pair in prerequisites)
+        {
+            if (g[pair[0]] == null)
+                g[pair[0]] = new List<int>() { pair[1] };
+            else
+                g[pair[0]].Add(pair[1]);
         }
 
-        foreach(int[]p in prerequisites){
-            int courseToTake = p[0];
-            int courseDependsOn = p[1];
+        var color = new int[numCourses];
+        bool Go(int vertex)
+        {
+            if (color[vertex] == 2)
+                return false;
+            if (color[vertex] == 1)
+                return true;
+            color[vertex] = 1;
 
-            map[courseToTake].Add(courseDependsOn); // using .Add since its a list
+            if (g[vertex] != null)
+                foreach (var next in g[vertex])
+                    if (Go(next))
+                        return true;
 
-        }
-
-        //iterate on all courses -- iteratimg like this since map can be disconnected
-        //1 --> 2
-        //3--> 4
-        foreach(int n in Enumerable.Range(0, numCourses)){
-           if(!dfs(n,map,visited)){
-               return false;
-           }
-        }
-
-        return true;
-    }
-
-    public bool dfs(int n, Dictionary<int, List<int>> map, HashSet<int> visited){
-        if(visited.Contains(n)){
+            color[vertex] = 2;
             return false;
         }
 
-        if(map[n]== new List<int>()) return true;
+        for (int i = 0; i < numCourses; i++)
+            if (color[i] == 0)
+                if (Go(i))
+                    return false;
 
-        visited.Add(n); // Adding current node to set
-        foreach(int i in map[n]){
-            if(!dfs(i,map, visited)){
-                return false;
-            }
-        }
-        visited.Remove(n);
-        map[n] = new List<int>();
         return true;
     }
 }
