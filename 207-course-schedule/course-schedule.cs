@@ -1,66 +1,49 @@
 public class Solution {
-    public bool CanFinish(int numCourses, int[][] prerequisites) 
-    {
-        // Initializing the adjency List with the length set as the total number of courses.
-        List<int>[] adjencyList = new List<int>[numCourses];
+    public bool CanFinish(int numCourses, int[][] prerequisites) {
+        //[2] --> [1,3] i.e currCourse -> all preReq
+        var map = new Dictionary<int, List<int>>();
 
-        for(int i = 0 ; i < numCourses ; i++)
-        {
-            adjencyList[i] = new List<int>();
+        var visited = new HashSet<int>();
+
+        for(int i=0; i<numCourses; i++){
+            map.Add(i, new List<int>());
         }
 
-        for(int i = 0 ;  i < prerequisites.Length ; i++)
-        {
-           // Adding the edge to the graph
-           // Its a directed graph so edges goes from course 1 to course 0 as
-           // in the problem statement its mentioned 
-           //"For example, the pair [0, 1], indicates that to take course 0 you have to first take course 1."
-           adjencyList[prerequisites[i][1]].Add(prerequisites[i][0]);
+        foreach(int[]p in prerequisites){
+            int courseToTake = p[0];
+            int courseDependsOn = p[1];
+
+            map[courseToTake].Add(courseDependsOn); // using .Add since its a list
+
         }
 
-        int[] indegree = new int[numCourses];
+        //iterate on all courses -- iteratimg like this since map can be disconnected
+        //1 --> 2
+        //3--> 4
+        foreach(int n in Enumerable.Range(0, numCourses)){
+           if(!dfs(n,map,visited)){
+               return false;
+           }
+        }
 
-        for(int i = 0 ; i < numCourses ; i++)
-        {
-            // Calculating indegree's for all nodes for the next step.
-            foreach(int j in adjencyList[i])
-            {
-              indegree[j]++;
+        return true;
+    }
+
+    public bool dfs(int n, Dictionary<int, List<int>> map, HashSet<int> visited){
+        if(visited.Contains(n)){
+            return false;
+        }
+
+        if(map[n]== new List<int>()) return true;
+
+        visited.Add(n); // Adding current node to set
+        foreach(int i in map[n]){
+            if(!dfs(i,map, visited)){
+                return false;
             }
         }
-
-        Queue<int> queue = new Queue<int>();
-     
-        for(int i = 0 ; i < indegree.Length ; i++)
-        {
-                        // Adding nodes with indegree 0 as they will be the starting nodes with no edges to them.
-            if(indegree[i] == 0)
-            {
-               Console.WriteLine($"{i} is added to the queue for start nodes");
-               queue.Enqueue(i);
-            }
-        }
-
-        int nodeCount = queue.Count;
-        while(queue.Count != 0)
-        {
-            int temp = queue.Dequeue();
-            foreach(int i in adjencyList[temp])
-            {
-                // Adding the next childs or the dependent courses to the queue
-                if(--indegree[i] == 0)
-                {
-                    queue.Enqueue(i);
-                    nodeCount++;
-                    Console.WriteLine($"{i} is added to the queue for further nodes");
-                }
-            }
-        }
-
-        if(nodeCount == numCourses)
-        {
-            return true;
-        }
-        return false;
+        visited.Remove(n);
+        map[n] = new List<int>();
+        return true;
     }
 }
