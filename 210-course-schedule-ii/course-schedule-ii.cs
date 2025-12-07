@@ -1,40 +1,91 @@
-using System;
-using System.Collections.Generic;
+public class Topo{
+    int n;
+    int[] degree;
+    List<int>[] graph;
+    
+    public Topo(int n, int[][] edges){
+        this.n = n;
+        
+        degree = new int[n];
+        graph = new List<int>[n];
+        for(int i = 0; i < n; i++)
+            graph[i] = new List<int>();
+
+        foreach(var edge in edges){
+            int u = edge[0], v = edge[1];
+
+            graph[v].Add(u);
+            degree[u]++;
+        }
+    }
+    
+    public List<int> Bfs(){
+        List<int> ans = new();
+
+        var q = new Queue<int>();
+        for(int i = 0; i < n; i++){
+            if(degree[i] == 0)
+                q.Enqueue(i);
+        }
+
+        while(q.Count > 0){
+            var u = q.Dequeue();
+            ans.Add(u);
+
+            foreach(var v in graph[u]){
+                if(--degree[v] == 0)
+                    q.Enqueue(v);
+            }
+        }
+
+        return ans;
+    }
+
+    public List<int> Dfs(){
+        List<int> ans = new();
+        bool hasCycle = false;
+
+        var check = new bool[n];
+        var checkCycle = new bool[n];
+        void Dfs(int u){
+            if(hasCycle)
+                return;
+
+            check[u] = true;
+            checkCycle[u] = true;
+
+            foreach(var v in graph[u]){
+                if(!check[v]){
+                    Dfs(v);
+                }
+                else if(checkCycle[v]){
+                    hasCycle = true;
+                    return;
+                }
+                    
+            }
+            
+            checkCycle[u] = false;
+            ans.Add(u);
+        }
+
+        for(int i = 0; i < n; i++){
+            if(!check[i])
+                Dfs(i);
+        }
+
+        if(hasCycle)
+            return new List<int>();
+
+        ans.Reverse();
+        return ans;
+    }
+}
 
 public class Solution {
-    public int[] FindOrder(int numCourses, int[][] prerequisites) {
-        int[] inDegree = new int[numCourses];
-        Dictionary<int, List<int>> adj = new Dictionary<int, List<int>>();
-        
-        foreach (var pre in prerequisites) {
-            if (!adj.ContainsKey(pre[0])) adj[pre[0]] = new List<int>();
-            adj[pre[0]].Add(pre[1]);
-        }
-        
-        foreach (var key in adj.Keys) {
-            foreach (var node in adj[key]) {
-                inDegree[node]++;
-            }
-        }
-        
-        Queue<int> q = new Queue<int>();
-        for (int i = 0; i < numCourses; i++) {
-            if (inDegree[i] == 0) q.Enqueue(i);
-        }
-        
-        List<int> ans = new List<int>();
-        while (q.Count > 0) {
-            int node = q.Dequeue();
-            ans.Add(node);
-            if (adj.ContainsKey(node)) {
-                foreach (var ngbr in adj[node]) {
-                    inDegree[ngbr]--;
-                    if (inDegree[ngbr] == 0) q.Enqueue(ngbr);
-                }
-            }
-        }
-        
-        ans.Reverse();
-        return ans.Count == numCourses ? ans.ToArray() : new int[0];
+    public int[] FindOrder(int n, int[][] edges) {
+        Topo t = new(n, edges);
+        var ans = t.Dfs().ToArray();
+        return ans;
     }
 }
